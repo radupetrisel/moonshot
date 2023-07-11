@@ -38,6 +38,10 @@ struct MissionView: View {
                             .foregroundColor(.lightBackground)
                             .padding(.vertical)
                         
+                        Text("Launch date: \(mission.launchDate?.formatted(date: .complete, time: .omitted) ?? "Didn't launch")")
+                            .foregroundStyle(.secondary)
+                            .padding(.bottom, 5)
+                        
                         Text("Crew")
                             .font(.title.bold())
                             .padding(.bottom, 5)
@@ -106,6 +110,9 @@ struct MissionView_Previews: PreviewProvider {
     
     static var previews: some View {
         MissionView(mission: missions[0], astronauts: astronauts)
+            .preferredColorScheme(.dark)
+        
+        MissionView(mission: missions[3], astronauts: astronauts)
             .preferredColorScheme(.dark)
     }
 }
