@@ -8,55 +8,75 @@
 import SwiftUI
 
 struct ContentView: View {
-    private let astronauts: [String: Astronaut] = Bundle.main.decode("astronauts.json")
-    private let missions: [Mission] = Bundle.main.decode("missions.json")
-    
     private let columns = [
         GridItem(.adaptive(minimum: 150))
     ]
     
+    private let astronauts: [String: Astronaut] = Bundle.main.decode("astronauts.json")
+    private let missions: [Mission] = Bundle.main.decode("missions.json")
+    
+    @State private var viewMode = ViewMode.list
+    
     var body: some View {
         NavigationView {
             ScrollView {
-                LazyVGrid(columns: columns) {
-                    ForEach(missions) { mission in
-                        NavigationLink {
-                            MissionView(mission: mission, astronauts: astronauts)
-                        } label: {
-                            VStack {
-                                Image(mission.image)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 100, height: 100)
-                                    .padding()
-                                
-                                VStack {
-                                    Text(mission.displayName)
-                                        .font(.headline)
-                                        .foregroundColor(.white)
-                                    
-                                    Text(mission.formattedLaunchDate)
-                                        .font(.caption)
-                                        .foregroundColor(.white.opacity(0.5))
-                                }
-                                .padding(.vertical)
-                                .frame(maxWidth: .infinity)
-                                .background(.lightBackground)
+                switch viewMode {
+                case .grid:
+                    LazyVGrid(columns: columns) {
+                        ForEach(missions) { mission in
+                            NavigationLink {
+                                MissionView(mission: mission, astronauts: astronauts)
+                            } label: {
+                                MissionCard(mission: mission)
                             }
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                            .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(.lightBackground)
-                            )
                         }
-
                     }
+                    .padding([.horizontal, .bottom])
+                case .list:
+                    LazyVStack {
+                        ForEach(missions, id: \.id) { mission in
+                            NavigationLink {
+                                MissionView(mission: mission, astronauts: astronauts)
+                            } label: {
+                                MissionCard(mission: mission)
+                            }
+                        }
+                    }
+                    .padding([.horizontal, .bottom])
                 }
-                .padding([.horizontal, .bottom])
             }
             .navigationTitle("Moonshot")
             .background(.darkBackground)
             .preferredColorScheme(.dark)
+            .toolbar {
+                Button {
+                    viewMode.toggle()
+                } label: {
+                    Image(systemName: viewMode.icon)
+                }
+            }
+        }
+    }
+    
+    private enum ViewMode {
+        case grid, list
+        
+        var icon: String {
+            switch self {
+            case .grid:
+                return "list.bullet"
+            case .list:
+                return "square.grid.2x2"
+            }
+        }
+        
+        mutating func toggle() {
+            switch self {
+            case .grid:
+                self = .list
+            case .list:
+                self = .grid
+            }
         }
     }
 }
