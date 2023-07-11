@@ -22,63 +22,28 @@ struct MissionView: View {
                         .padding(.top)
                     
                     VStack(alignment: .leading) {
-                        Rectangle()
-                            .frame(height: 2)
-                            .foregroundColor(.lightBackground)
-                            .padding(.vertical)
+                        Separator()
                         
                         Text("Mission highlights")
                             .font(.title.bold())
                             .padding(.bottom, 5)
                         
                         Text(mission.description)
-                        
-                        Rectangle()
-                            .frame(height: 2)
-                            .foregroundColor(.lightBackground)
-                            .padding(.vertical)
+                            .padding(.bottom, 5)
                         
                         Text("Launch date: \(mission.launchDate?.formatted(date: .complete, time: .omitted) ?? "Didn't launch")")
                             .foregroundStyle(.secondary)
                             .padding(.bottom, 5)
                         
+                        Separator()
+            
                         Text("Crew")
                             .font(.title.bold())
                             .padding(.bottom, 5)
                     }
                     .padding(.horizontal)
                     
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(crew, id: \.role) { crewMember in
-                                NavigationLink {
-                                    AstronautView(astronaut: crewMember.astronaut)
-                                } label: {
-                                    HStack {
-                                        Image(crewMember.astronaut.id)
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 104)
-                                            .clipShape(Capsule())
-                                            .overlay {
-                                                Capsule()
-                                                    .strokeBorder(.white)
-                                            }
-                                        
-                                        VStack(alignment: .leading) {
-                                            Text(crewMember.astronaut.name)
-                                                .font(.headline)
-                                                .foregroundColor(.white)
-                                            
-                                            Text(crewMember.role)
-                                                .foregroundColor(.secondary)
-                                        }
-                                    }
-                                    .padding(.horizontal)
-                                }
-                            }
-                        }
-                    }
+                    CrewView(crew: crew)
                 }
             }
         }
@@ -96,11 +61,6 @@ struct MissionView: View {
             
             fatalError("Cannot find astronaut \($0.name).")
         }
-    }
-    
-    struct CrewMember {
-        let role: String
-        let astronaut: Astronaut
     }
 }
 
